@@ -1,0 +1,233 @@
+:root {
+  --accent-teal: 	#00c2c7;
+  --accent-purple: #7D78FF;
+  --accent-light: #F4F4F8;
+  --accent-dark-purple: #5a4fce;
+  --accent-pink: #F08080;
+  --day-bg-light: #F8F4F4;
+
+  --app-accent: var(--accent-purple);
+}
+
+
+* {
+box-sizing: border-box;
+}
+
+[color-scheme="light"] {
+  color-scheme: light;
+}
+
+[color-scheme="dark"] {
+  color-scheme: dark;
+}
+
+/* BODY */
+
+body {
+font-family: 'system-ui';
+font-size: 18px;
+font-weight: 300;
+line-height: 24px;
+letter-spacing: 0.03em;
+color: #2c3e50;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+font-smoothing: antialiased;
+margin: 0;
+padding: 0;
+}
+
+.accented {
+  accent-color: var(--app-accent);
+}
+
+
+a {
+text-decoration: none;
+color: var(--app-accent);
+transition: 0.3s;
+border-bottom: 1px solid transparent;
+}
+
+a:hover {
+color: #2c3e50;
+}
+
+.grid {
+display: grid;
+width: 100vw;
+min-height: 100vh;
+margin: 0;
+padding: 0;
+}
+
+  .tag {
+    margin: 6px;
+    color: var(--app-accent);
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 2px;
+    cursor: pointer;
+    font-size: 18px;
+    }
+
+.tag:hover {
+    color: #000;
+}
+
+   .greybtn {
+     border: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #ddd;
+    padding: 6px 8px;
+    font-size: 16px;
+    color: #222;
+    cursor: pointer;
+   max-width: 150px;
+       font-weight: 300;
+       transition: 0.2s;
+       letter-spacing: 0.03em;
+    }
+
+
+    .greybtn:hover {
+      background-color: #848484;
+      border: 1px solid #848484;
+      color: #fff;
+
+    }
+
+    .darkgreybtn {
+      border: none;
+     border: 1px solid #696969;
+     background-color: #696969;
+     padding: 8px 10px;
+     border-radius: 4px;
+     font-size: 16px;
+     color: #eee;
+     cursor: pointer;
+        font-weight: 300;
+        letter-spacing: 0.03em;
+     }
+
+    .pinkbtn {
+     border: none;
+    border: 1px solid var(--app-accent);
+    border-radius: 4px;
+    background-color: var(--app-accent);
+    padding: 6px 8px;
+    font-size: 16px;
+    color: #fff;
+    cursor: pointer;
+   max-width: 150px;
+       font-weight: 300;
+       transition: 0.2s;
+       letter-spacing: 0.03em;
+    }
+
+    .pinkbtn:hover {
+      background-color: #c06666;
+      border: 1px solid #c06666;
+    }
+
+     .blackbtn {
+       border: none;
+       background-color: #848484;
+       border: 1px solid #848484;
+       color: #fff;
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-size: 16px;
+    cursor: pointer;
+   max-width: 150px;
+       font-weight: 300;
+        transition: 0.2s;
+        letter-spacing: 0.03em;
+    }
+
+    .blackbtn:hover {
+      background-color: #ddd;
+      border: 1px solid #ddd;
+      color: #000;
+
+    }
+
+    .delete-btn {
+      border: none;
+      background-color: #000;
+      border: 1px solid #000;
+      color: #fff;
+   border-radius: 4px;
+   padding: 6px 10px;
+   font-size: 16px;
+   cursor: pointer;
+  max-width: 150px;
+       transition: 0.2s;
+       letter-spacing: 0.03em;
+       font-weight: 400;
+
+    }
+
+
+    .delete-btn:hover {
+      background-color: #e50000;
+      border: 1px solid #e50000;
+      font-weight: 400;
+
+    }
+
+.remove {
+    font-family: 'Proxima Nova Regular';
+
+        color: #e50000;
+        font-size: 18px;
+        margin-right: 5px;
+        padding: 2px;
+        cursor: pointer;
+    }
+
+
+
+    .remove:hover {
+    color: #000;
+    }
+
+
+
+.lil-buttons {
+display: grid;
+justify-content: flex-start;
+grid-template-columns: auto auto;
+grid-gap: 8px;
+margin-top:12px;
+}
+
+.section-title {
+  font-weight: 400;
+}
+
+.accent-list {
+  list-style-type: none;
+  padding: 0;
+  margin-left: 5px;
+}
+
+  .accent-list li {
+      display: block;
+      border-left: 1px solid var(--app-accent);
+      padding-left: 25px;
+      padding-top: 0;
+      margin-top: 0;
+      padding-bottom: 4px;
+      font-size: 16px;
+    }
+
+.accent-list li:first-child {
+    padding-top: 0;
+    margin: 0;
+    }
+
+  .accent-list li:last-child {
+    padding-bottom: 0;
+  }
