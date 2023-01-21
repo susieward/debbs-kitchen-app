@@ -3,22 +3,8 @@ export default class Menus {
   name = 'menus-view'
   state = () => ({
     selectedYear: '',
-    selectedMonth: '',
-    displayedMenus: null
+    selectedMonth: ''
   })
-
-  watch = {
-    selectedMonth: {
-      handler(newValue) {
-        this.displayedMenus = this.menuList()
-      }
-    },
-    menus: {
-      handler(newValue, oldValue) {
-        console.log('menus newValue', newValue)
-      }
-    }
-  }
 
   render() {
     return (
@@ -27,11 +13,12 @@ export default class Menus {
           <h1>Menu Archive</h1>
         </div>
        <div class="menus-list-container">
-       <progress class="accented" max="100" value="50"></progress>
          <p>
            <span style="display: inline-block; margin-right: 20px">
            <label for="year">Year: </label>
-            <select name="year" onchange={(e) => this.selectedYear = e.target.value}>
+            <select
+              name="year"
+              onchange={(e) => this.selectedYear = e.target.value}>
               <option value="">Select year</option>
               {this.years.map(year => {
                 return (<option value={year}>{year}</option>)
@@ -40,10 +27,28 @@ export default class Menus {
          </span>
          {this.selectedYear ? this.monthSelect : null}
          </p>
-         {this.displayedMenus}
+         <map-items
+           items={this.currentMenus}
+           data-for={(menu) => this.buildMenu(menu)}>
+         </map-items>
       </div>
       </div>
     )
+  }
+
+  buildMenu(menu) {
+    return (
+      <div>
+        <h3>{menu.month} {menu.date} -</h3>
+        <ul>
+          {menu.dishes.map((dish) => {
+            return (
+              <li onclick={() => this.$router.push({ name: 'RecipePage', params: { id: dish.id }})}>{dish.name}</li>
+              )
+            })}
+           </ul>
+        </div>
+      )
   }
 
   get menus() {
@@ -56,9 +61,7 @@ export default class Menus {
       <label for="month">Month: </label>
        <select name="month" onchange={(e) => this.selectedMonth = e.target.value}>
         <option value="">Select month</option>
-        {this.availableMonths.map(month => {
-          return (<option value={month}>{month}</option>)
-        })}
+        {this.availableMonths.map(month => (<option value={month}>{month}</option>))}
       </select>
       </>
     )
@@ -69,28 +72,18 @@ export default class Menus {
       const menus = this.menus.filter(menu => {
         return (menu.month === this.selectedMonth) && (menu.year === this.selectedYear)
       })
-      return menus.sort((a, b) => {
+      const sorted = menus.sort((a, b) => {
         return a.date - b.date
+      })
+      return sorted.map(menu => {
+        const dishes = menu.dishes.map(d => {
+          const { id, name } = d
+          return { id, name }
+        })
+        return { ...menu, dishes: dishes }
       })
     }
     return []
-  }
-
-  menuList() {
-    return this.currentMenus.map(menu => {
-      return (
-        <div>
-          <h3>{menu.month} {menu.date} -</h3>
-          <ul>
-          {menu.dishes.map(dish => {
-            return (
-              <li onclick={() => this.$router.push({ name: 'RecipePage', params: { id: dish._id }})}>{dish.name}</li>
-            )
-          })}
-          </ul>
-        </div>
-      )
-    })
   }
 
   get months() {

@@ -1,54 +1,95 @@
-import { Api } from '@/services/api'
+import { Api } from '@/api/api'
+const RecipeEditor = () => import('@/components/recipe/RecipeEditor')
+const RecipeIngredients = () => import('@/components/recipe/RecipeIngredients')
+const RecipeInstructions = () => import('@/components/recipe/RecipeInstructions')
+const RecipeTags = () => import('@/components/recipe/RecipeTags')
 
-export default class Recipe {
+export default class RecipeView {
   name = 'recipe-view'
+  components = { RecipeEditor, RecipeIngredients, RecipeTags, RecipeInstructions }
   state = () => ({
     showRecipeEditor: false,
-    selectedRecipe: {},
-    output: null,
-    recipe: {}
+    draft: false,
+    recipe: {
+      name: '',
+      tags: [],
+      photo: ''
+    }
   })
 
-  async createdCallback() {
+  createdCallback() {
     const id = this.$route.params.id
-    if (this.recipes.length > 0) {
-      this.recipe = this.recipes.find(r => r._id === id)
+    if (!id) {
+      return this.showRecipeEditor = true
     } else {
-      this.recipe = await Api.$recipes.getRecipeById(id)
-      console.log(this.recipe)
+      if (this.recipes.length === 0) {
+        return this.getRecipe()
+      }
+      this.recipe = this.recipes.find(r => r.id === id)
     }
   }
 
   render() {
     return (
       <layout-component>
-        <layout-top>
-          <span slot="title">
-            {this.showRecipeEditor ? 'Edit recipe' : this.recipe.name}
+          <span slot="header-main">
+            {this.recipe.name || 'New Recipe'}
           </span>
-          <div slot="header-right">
-            {this.recipeButtons}
+          <div slot="header-aside">
+            {this.existingRecipe ? this.recipeButtons : <span class="item1">
+              <button class="pinkbtn" onclick={() => this.save()}>
+                save changes
+              </button>
+            </span>}
           </div>
-          {this.recipe.tags?.length > 0 ? this.recipeTags : null}
-        </layout-top>
+          <div slot="subheader">
+            <recipe-tags
+              editing={this.showRecipeEditor}
+              recipeTags={this.recipe.tags}
+              onupdate={(e) => this.recipe.tags = e.detail}>
+            </recipe-tags>
+          </div>
 
-        <layout-content>
-          <div class="recipe-container" slot="main">
-            <div data-if={Boolean(this.recipe.photo)} class="recipe-photo-container">
-              <img class="recipe-photo" src={this.recipe.photo} />
+        <div slot="content-main">
+          <div class="recipe-container">
+            <recipe-editor
+                recipe={this.recipe}
+                editing={this.showRecipeEditor}>
+              </recipe-editor>
+            <recipe-instructions
+              editing={this.showRecipeEditor}
+              recipe-id={this.recipe.id}>
+            </recipe-instructions>
             </div>
-              {this.recipe.instructions?.length > 0 ? this.recipeInstructions : null}
-            </div>
-            <div style="display: grid; justify-content: flex-start" slot="aside">
-              {this.recipe.ingredients?.length > 0 ? this.recipeIngredients : null}
-            </div>
-        </layout-content>
+        </div>
+          <div style="min-width: 300px" slot="content-aside">
+            <recipe-ingredients
+              editing={this.showRecipeEditor}
+              recipe-id={this.recipe.id}
+              onupdate={(e) => this.recipe.ingredients = e.detail}>
+            </recipe-ingredients>
+          </div>
       </layout-component>
     )
   }
 
+  get headerTitle() {
+    if (this.existingRecipe && this.recipe?.name) {
+      return this.showRecipeEditor ? `Edit Recipe: ${this.recipe.name}` : this.recipe.name
+    }
+    return 'New Recipe'
+  }
+
+  get existingRecipe() {
+    return Boolean(this.$route.params.id)
+  }
+
   get recipes() {
     return this.$store.state.recipes
+  }
+
+  get drafts() {
+    return this.$store.state.drafts
   }
 
   get tag(){
@@ -57,80 +98,79 @@ export default class Recipe {
 
   get recipeButtons() {
     return this.showRecipeEditor
-    ? (<button class="greybtn" onclick={() => this.closeRecipeEditor()}>
-      close editor
-    </button>)
-    : (
+    ? (
       <>
-      <button class="greybtn" onclick={() => this.openRecipeEditor(this.recipe)}>
+      <button class="greybtn" onclick={() => this.closeRecipeEditor()}>
+        close editor
+      </button>
+      <span class="btnsrow">
+        <span class="item1">
+          <button class="pinkbtn" onclick={() => this.save()}>
+            save changes
+          </button>
+        </span>
+        <span class="item2">
+          <button
+            class="delete-btn"
+            onclick={() => this.deleteRecipe(this.recipe.id)}>
+            delete recipe
+          </button>
+        </span>
+      </span>
+      </>
+  )
+    : (
+      <span>
+      <button class="greybtn" onclick={() => this.openRecipeEditor()}>
         edit recipe
       </button>
       <button style="margin-left: 10px" class="pinkbtn">print</button>
-      </>
+      </span>
     )
   }
 
-  get recipeIngredients() {
-    return (
-      <>
-      <span class="section-title">Ingredients:</span>
-        <ul class="accent-list">
-        {this.recipe.ingredients.map(ingredient => {
-          return (<li>{ingredient?.text || ingredient}</li>)
-        })}
-      </ul>
-      </>
-    )
-  }
-
-  get recipeTags() {
-    return (
-      <div slot="subheader" class="tags-section">
-      Tags:
-        {this.recipe.tags.map(tag => {
-          return (<span class="tag">{tag}</span>)
-        })}
-      </div>
-    )
-  }
-
-  get recipeInstructions() {
-    return (
-      <>
-      <p class="section-title">Instructions:</p>
-      <div class="recipe-directions">
-      <ol style="margin-top: 0; padding-top: 0">
-      {this.recipe.instructions.map((item, index) => {
-        const text = <div class="directions-text"></div>
-        text.innerHTML = item.text
-        return (
-          <li>
-            {text}
-            <div data-if={item.hasImage} class="recipe-box-img-container">
-              {item.hasImage ? <img class="recipe-box-img" src={item.image} /> : null}
-            </div>
-          </li>
-        )
-      })}
-      </ol>
-      </div>
-      </>
-    )
-  }
-
-  openRecipeEditor(recipe) {
+  openRecipeEditor() {
     this.showRecipeEditor = true
-    this.selectedRecipe = recipe
   }
 
-  closeRecipeEditor() {
+  closeRecipeEditor(update = false) {
     this.showRecipeEditor = false
-    this.getRecipe()
+    if (update) this.getRecipe()
   }
 
   async getRecipe() {
     const id = this.$route.params.id
-    this.recipe = await this.$api.$recipes.getRecipeById(id)
+    this.recipe = await Api.$recipes.get(id)
+    console.log(this.recipe)
+  }
+
+  async save() {
+    const promise = this.existingRecipe ? this.update : this.create
+    try {
+      await promise()
+      this.showRecipeEditor = false
+      this.$store.dispatch('initRecipes')
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  async create() {
+    return Api.$recipes.create(this.recipe)
+  }
+
+  async update() {
+    return Api.$recipes.update(this.recipe, this.recipe.id)
+  }
+
+  async deleteRecipe(id) {
+    try {
+      let res = await Api.$recipes.delete(id)
+      console.log(res)
+      return this.$router.push('/recipes')
+    } catch(err) {
+      console.error(err)
+    }
   }
 
   get styles() {
@@ -143,15 +183,14 @@ export default class Recipe {
       }
 
       .recipe-photo-container {
-        display: grid;
-        width: 100%;
-        justify-content: center;
+        width: auto;
+        height: 400px;
         margin-bottom: 20px;
       }
 
       .recipe-photo {
-        height: 400px;
-        width: 700px;
+        width: 100%;
+        height: 100%;
         object-fit: cover;
       }
 
@@ -174,16 +213,12 @@ export default class Recipe {
       .recipe-container {
         display: grid;
         align-content: flex-start;
-        padding: 30px;
+        padding: 40px;
         font-size: 18px;
-        width: 100%;
-        max-width: 900px;
         background-color: #f9f9f9;
+        min-width: 800px;
+        margin-right: 30px;
       }
-
-      .tags-section {
-      }
-
 
           .recipe-back {
           display: none;
@@ -200,81 +235,10 @@ export default class Recipe {
 
           }
 
-       .recipe-name-div {
-            display: grid;
-          justify-content: flex-start;
-          font-weight: 300;
-          font-size: 30px;
-          }
-
-          .tags-title {
-
-
-          }
-
-          .recipe-ingredients {
-            list-style-type: none;
-            padding: 0;
-            margin-left: 5px;
-          }
-
-              .recipe-ingredients li {
-                display: block;
-                border-left: 1px solid var(--app-accent);
-                padding-left: 25px;
-                padding-top: 0;
-                margin-top: 0;
-                padding-bottom: 4px;
-                font-size: 16px;
-              }
-
-              .recipe-ingredients li:first-child {
-              padding-top: 0;
-
-              margin: 0;
-              }
-
-              .recipe-ingredients li:last-child {
-              padding-bottom: 0;
-              }
-
-              .recipe-directions {
-                display: grid;
-                align-content: flex-start;
-              }
-
-
-              .directions-text {
-              margin: 0;
-              padding: 0;
-
-              }
-
-              .directions-text p {
-                line-height: 28px;
-              }
-
-              .recipe-box-img-container {
-                display: grid;
-                justify-content: center;
-
-              }
-
-            .recipe-box-img {
-              height: auto;
-        width: 600px;
-              object-fit: cover;
-
-
-            }
-
-
           @media screen and (max-width: 1200px){
             .recipe-page-container {
-
                width: 850px;
                padding: 30px;
-
             }
 
             .recipe-photo-container {
@@ -295,10 +259,7 @@ export default class Recipe {
 
           @media screen and (max-width: 1000px){
             .recipe-page-container {
-
                width: 800px;
-
-
             }
 
             .recipe-photo {
@@ -306,16 +267,11 @@ export default class Recipe {
               width: 600px;
               object-fit: cover;
             }
-
           }
-
 
           @media screen and (max-width: 970px){
             .recipe-page-container {
-
                width: 700px;
-
-
             }
 
             .recipe-photo {
@@ -325,20 +281,13 @@ export default class Recipe {
             }
 
             .recipe-container {
-
-
               padding: 20px;
-
           }
-
         }
 
           @media screen and (max-width: 766px){
             .recipe-page-container {
-
                width: 550px;
-
-
             }
 
             .recipe-name-div {
@@ -354,27 +303,11 @@ export default class Recipe {
             .recipe-box-img {
               width: 500px;
             }
-
-
-
-
         }
 
-
           @media screen and (max-width: 590px){
-
-            .recipe-page {
-
-            }
             .recipe-page-container {
-
                width: 420px;
-
-
-            }
-
-            .recipe-container {
-
             }
 
             .recipe-name-div {
@@ -384,7 +317,6 @@ export default class Recipe {
             .recipe-photo {
               height: 400px;
               width: 360px;
-
             }
 
             .recipe-box-img {
@@ -393,9 +325,8 @@ export default class Recipe {
 
           }
 
-          @media screen and (max-width: 400px){
+        @media screen and (max-width: 400px){
             .recipe-page-container {
-
                width: 360px;
                padding-left: 15px;
                padding-right: 15px;
@@ -403,11 +334,9 @@ export default class Recipe {
             }
 
             .recipe-container {
-
-      font-size: 16px;
-      line-height: 25px;
+              font-size: 16px;
+              line-height: 25px;
               padding: 10px;
-
           }
 
             .recipe-photo {
@@ -425,9 +354,7 @@ export default class Recipe {
 
 
               @media print {
-
                 .recipe-page-container {
-
                    width: 800px;
                    border: 1px solid #eee;
 

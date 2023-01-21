@@ -1,10 +1,9 @@
-import Header from '@/components/Header'
-import Sidenav from '@/components/Sidenav'
+import Header from '@/components/layout/Header'
+import Sidenav from '@/components/layout/Sidenav'
 
 export default class App {
   name = 'debbs-kitchen-app'
   components = { Header, Sidenav }
-
   state = () => ({
     prevRoute: null,
     routeName: '',
@@ -14,13 +13,8 @@ export default class App {
   })
 
   async createdCallback() {
-    await Promise.allSettled([
-      this.$store.dispatch('initRecipes'),
-      this.$store.dispatch('initMenus')
-    ])
-    // console.log(this.$store.state.recipes, this.$store.state.menus)
+    await this.$store.dispatch('init')
   }
-
 
   /*
   connectedCallback() {
@@ -114,9 +108,8 @@ export default class App {
                             "main"
                             "footer";
         z-index: 0;
-        grid-template-rows: minmax(100px, auto) 1fr auto;
+        grid-template-rows: 90px auto auto;
         position: relative;
-        grid-row-gap: 50px;
       }
 
       .header {
@@ -135,6 +128,7 @@ export default class App {
       display: grid;
       grid-gap: 40px;
       justify-content: center;
+      margin-top: 40px;
       }
 
       /* CONTENT */
@@ -142,6 +136,7 @@ export default class App {
       .content {
       display: grid;
       padding: 0;
+      border: 1px solid blue;
       }
 
       /* FOOTER */

@@ -1,4 +1,4 @@
-const MenuPlanner = () => import('@/components/MenuPlanner')
+import MenuPlanner from '@/MenuPlanner'
 
 export default class Home {
   name = 'home-view'

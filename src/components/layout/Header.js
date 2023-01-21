@@ -1,4 +1,4 @@
-import Navbar from '@/components/Navbar.js'
+import Navbar from './Navbar.js'
 
 export default class Header {
   name = 'app-header'
@@ -8,7 +8,7 @@ export default class Header {
 
   render() {
     return (
-      <div class="header-container">
+      <header class="header-container">
           <div class="icon-nav">
               <div class="bm-burger-button" onclick={() => this.$emit('open')}>
                 {[1, 2, 3].map(index => {
@@ -29,7 +29,7 @@ export default class Header {
           </Navbar>
           <div class="search">
           </div>
-      </div>
+      </header>
     )
   }
 
@@ -54,8 +54,8 @@ export default class Header {
         margin: 0;
         padding: 0;
         font-weight: 400;
-        font-size: 28px;
-        letter-spacing: 0.03em;
+        font-size: 24px;
+        letter-spacing: 0.02em;
       }
 
       .title-and-links {
@@ -149,10 +149,10 @@ export default class Header {
 
       .bm-burger-button {
            position: absolute;
-           width: 30px;
-           height: 25px;
-           left: 35px;
-           top: 28%;
+           width: 28px;
+           height: 22px;
+           left: 25px;
+           top: 29%;
            cursor: pointer;
            display: block;
 
@@ -162,7 +162,7 @@ export default class Header {
          }
       .line-style {
            position: absolute;
-           height: 8%;
+           height: 1px;
            top: 0;
            left: 0;
            right: 0;

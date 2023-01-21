@@ -29,13 +29,31 @@ font-family: 'system-ui';
 font-size: 18px;
 font-weight: 300;
 line-height: 24px;
-letter-spacing: 0.03em;
+letter-spacing: 0.02em;
 color: #2c3e50;
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 font-smoothing: antialiased;
 margin: 0;
 padding: 0;
+}
+
+input[type="text"] {
+  padding: 6px 8px;
+  font-size: 16px;
+  color: #222;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: 'system-ui';
+}
+
+menu {
+    list-style-type: none;
+    display: grid;
+    grid-auto-flow: column;
+    padding: 0;
+    margin-bottom: 0;
+    gap: 1em;
 }
 
 .accented {
@@ -51,7 +69,7 @@ border-bottom: 1px solid transparent;
 }
 
 a:hover {
-color: #2c3e50;
+  color: #2c3e50;
 }
 
 .grid {
@@ -78,11 +96,10 @@ padding: 0;
    .greybtn {
      border: none;
     border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #ddd;
+    background-color: #fff;
     padding: 6px 8px;
     font-size: 16px;
-    color: #222;
+    color: #696969;
     cursor: pointer;
    max-width: 150px;
        font-weight: 300;
@@ -101,9 +118,7 @@ padding: 0;
     .darkgreybtn {
       border: none;
      border: 1px solid #696969;
-     background-color: #696969;
      padding: 8px 10px;
-     border-radius: 4px;
      font-size: 16px;
      color: #eee;
      cursor: pointer;
@@ -127,8 +142,8 @@ padding: 0;
     }
 
     .pinkbtn:hover {
-      background-color: #c06666;
-      border: 1px solid #c06666;
+      background-color: var(--app-accent-purple);
+      border: 1px var(--app-accent-purple);
     }
 
      .blackbtn {
@@ -178,7 +193,6 @@ padding: 0;
     }
 
 .remove {
-    font-family: 'Proxima Nova Regular';
 
         color: #e50000;
         font-size: 18px;
@@ -193,7 +207,53 @@ padding: 0;
     color: #000;
     }
 
+    .box-item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto;
+    background-color: #eee;
+    padding: 20px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 16px;
+    line-height: 25px;
+    }
 
+    .box-item:hover {
+      cursor: pointer;
+    }
+
+    .box-edit-item {
+      display: grid;
+      grid-template-columns: auto auto;
+      grid-template-rows: auto auto;
+      background-color: #eee;
+      padding: 20px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+
+    }
+
+    .box-edit {
+      background-color: #aaa;
+      border: 1px solid transparent;
+      transition: 0.3s;
+      border-radius: 4px;
+      color: #fff;
+      padding: 4px 6px;
+      font-weight: 300;
+      line-height: normal;
+    font-size: 16px;
+      cursor: pointer;
+      max-height: 30px;
+
+    }
+
+    .box-edit:hover {
+      background-color: #767676;
+      border: 1px solid transparent;
+      color: #fff;
+    }
 
 .lil-buttons {
 display: grid;
@@ -216,11 +276,12 @@ margin-top:12px;
   .accent-list li {
       display: block;
       border-left: 1px solid var(--app-accent);
-      padding-left: 25px;
+      padding-left: 20px;
       padding-top: 0;
       margin-top: 0;
-      padding-bottom: 4px;
+      padding-bottom: 12px;
       font-size: 16px;
+      line-height: 20px;
     }
 
 .accent-list li:first-child {

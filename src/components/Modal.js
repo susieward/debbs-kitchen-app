@@ -1,6 +1,7 @@
-
+const MenuEditor = () => import('@/components/MenuEditor')
 export default class Modal {
   name = 'app-modal'
+  components = { MenuEditor }
   state = () => ({
     dishes: [],
     recipes: [],
@@ -27,7 +28,7 @@ export default class Modal {
           </div>
           <div class="modal-container">
             <div class="modal-items">
-            {this.currentMenus}
+            {this.newMenuContainer ? this.editor : this.currentMenus}
             </div>
             <span>
               <div>
@@ -48,35 +49,51 @@ export default class Modal {
   }
 
   get currentMenus() {
-    if (this.menus.length === 0) return ''
-    return this.menus.map(menu => {
-      return (
-        <div
-          class="menus">
+    if (!this.menu?.id) return ''
+    return (
+        <div class="menus">
           <div class="menu-list-container">
+          {this.showEditor
+            ? (
+              <menu-editor
+                menu={this.menu}
+                date={this.date}
+                month={this.month}
+                year={this.year}
+                onclose={() => this.closeEditor()}>
+              </menu-editor>
+            ) :
             <ul class="menu-list">
-            {menu.dishes.map(dish => {
+            {this.menu.dishes.map(dish => {
               return (
                 <li onclick={() => this.linkRecipe(dish)}>
                   {dish.name}
                 </li>
               )
             })}
-            </ul>
+            </ul>}
           </div>
           <div class="menu-buttons-container">
             <span>
-              <button data-if={this.showEditor === false} class="greybtn" onclick={() => this.openEditor(menu)}>
-                edit menu
-              </button>
-              <button class="blackbtn" onclick={() => this.deleteMenu(menu._id)}>
+              <button class="blackbtn" onclick={() => this.deleteMenu(this.menu.id)}>
                 delete menu
               </button>
             </span>
           </div>
         </div>
       )
-    })
+  }
+
+  get editor() {
+    return (
+      <menu-editor
+        menu={this.selectedMenu}
+        date={this.date}
+        month={this.month}
+        year={this.year}
+        onclose={() => this.closeEditor()}>
+      </menu-editor>
+    )
   }
 
   get recipeNames() {
@@ -84,36 +101,9 @@ export default class Modal {
   }
 
   linkRecipe(dish) {
-    let dishId = dish._id;
-    this.$router.push({ name: "RecipePage", params: { id: dishId } });
+    this.$router.push({ name: "RecipePage", params: { id: dish.id } })
   }
-  onChange() {
-    this.isOpen = true;
-    this.filterResults();
-  }
-  filterResults() {
-    this.results = this.recipeNames.filter((recipe) => recipe.toLowerCase().indexOf(this.search.toLowerCase()) > -1);
-  }
-  checkInput() {
-    if (this.newDish === "") {
-      this.disabled = true;
-    } else {
-      this.disabled = false;
-      this.addDish();
-    }
-  }
-  addToDishes(result) {
-    this.dishes.push(result);
-    this.newDish = "";
-  }
-  addDish() {
-    this.dishes.push(this.newDish);
-    this.newDish = "";
-  }
-  removeDish(index) {
-    let dishes = this.dishes;
-    dishes.splice(index, 1);
-  }
+
   openEditor(menu) {
     this.selectedMenu = menu;
     this.showEditor = true;
@@ -187,7 +177,7 @@ export default class Modal {
       }
 
       .menu-list li {
-        color: #f08080;
+        color: var(--app-accent);
         margin: 0;
         padding: 0;
         cursor: pointer;
@@ -269,36 +259,6 @@ export default class Modal {
         max-width: 150px;
       }
 
-      .closebtn {
-        border: none;
-        border: 1px solid #000;
-        border-radius: 6px;
-        background-color: #000;
-        padding: 6px 10px;
-        font-size: 16px;
-        color: #fff;
-        cursor: pointer;
-        max-width: 150px;
-      }
-
-      .generalbtn {
-        border: none;
-        border: 1px solid #f56c7c;
-        border-radius: 6px;
-        background-color: #f56c7c;
-        padding: 6px 10px;
-        font-size: 16px;
-        color: #fff;
-        font-family: "Work Sans";
-        font-weight: 400;
-        cursor: pointer;
-      }
-
-      .generalbtn:hover {
-        background-color: rgba(245, 108, 124, 0.6);
-        border: 1px solid rgba(245, 108, 124, 0.6);
-      }
-
       .btns {
         display: grid;
         justify-content: center;
@@ -317,19 +277,6 @@ export default class Modal {
         display: grid;
         align-items: flex-end;
         border: 1px solid #ddd;
-      }
-
-      .results-dropdown {
-        width: 300px;
-        background-color: #ddd;
-        min-height: 50px;
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-      }
-
-      .dishes-select {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
       }
 
       .dishes-select li {

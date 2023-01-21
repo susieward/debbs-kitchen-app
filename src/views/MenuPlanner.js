@@ -8,19 +8,8 @@ export default class MenuPlanner {
     weekdays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'],
     months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     showModal: false,
-    thisDate: '',
-    currentDays: null
+    thisDate: ''
   })
-
-  watch = {
-    dateContext: {
-      handler(newValue) {
-        if (newValue) {
-          this.updateDays()
-        }
-      }
-    }
-  }
 
   createdCallback() {
     let date = new Date().setHours(0, 0, 0, 0)
@@ -39,14 +28,23 @@ export default class MenuPlanner {
           </button>
         </div>
         <div class="month">
-          <div class="weekdays">
-            {this.weekdays.map(day => {
-              return (<div class="day-title">{day}</div>)
-            })}
-          </div>
-            <div class="week">
-              {this.currentDays}
+            <div class="weekdays">
+              {this.weekdays.map(item => (<div class="day-title">{item}</div>))}
             </div>
+            <map-items
+              class="week"
+              items={this.currentDays}
+              data-for={(item) => {
+                return item === '&nbsp;'
+                  ? <div class="day">&nbsp;</div>
+                  : (
+                      <div class="day" onclick={() => this.openModal(item)}>
+                        {item}
+                        {this.buildMenuList(item)}
+                      </div>
+                    )
+                }}>
+              </map-items>
         </div>
         {this.showModal ? this.modal : null}
       </div>
@@ -56,12 +54,12 @@ export default class MenuPlanner {
   get modal() {
     return (
       <app-modal
-          menus={this.createdMenus}
-          date={this.thisDate}
-          month={this.monthName}
-          year={this.year}
-          onclose={() => this.closeModal()}>
-        </app-modal>
+        menu={this.createdMenus}
+        date={this.thisDate}
+        month={this.monthName}
+        year={this.year}
+        onclose={() => this.closeModal()}>
+      </app-modal>
     )
   }
 
@@ -72,9 +70,9 @@ export default class MenuPlanner {
   get createdMenus() {
     if (this.menus.length > 0) {
       let x = this.menus.filter(({date}) => date === this.thisDate)
-      return x.filter(({month}) => month === this.monthName)
+      return x.filter(({month}) => month === this.monthName)[0]
     }
-    return []
+    return null
   }
 
   get year() {
@@ -100,21 +98,16 @@ export default class MenuPlanner {
     return this.getDaysInMonth(this.year, this.month + 1)
   }
 
-  updateDays() {
-    if (this.currentDays) this.currentDays = null
-    this.currentDays = this.buildMonthDays()
-  }
-
-  buildMonthDays() {
+  get currentDays() {
     const days = []
     const firstDay = this.firstDay
     const daysInMonth = this.daysInMonth
 
     for (let i = 1; i <= firstDay; i++) {
-      days.push(<div class="day">&nbsp;</div>)
+      days.push(`&nbsp;`)
     }
     for (let i = 1; i <= daysInMonth; i++) {
-      days.push(this.buildDay(i))
+      days.push(i)
     }
     return days
   }
@@ -123,17 +116,9 @@ export default class MenuPlanner {
     return new Date(year, month, 0).getDate()
   }
 
-  buildDay(date) {
+  buildMenuList(date) {
     const dateMenus = this.getDateMenus(date)
-    return (
-      <div class="day" onclick={() => this.openModal(date)}>
-        {date}
-        {(dateMenus.length > 0) ? this.buildMenuList(dateMenus) : null}
-      </div>
-    )
-  }
-
-  buildMenuList(dateMenus) {
+    if (dateMenus.length === 0) return null
     return dateMenus.map(menu => {
       return (
         <div>

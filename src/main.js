@@ -1,12 +1,11 @@
-import Witchly from '../../../src'
+import Witchly from 'witchly'
 import App from './App'
 import router from './router'
 import store from './state'
-// import './app.css'
 import './css/main.css'
-import { Layout, LayoutTop, LayoutContent } from '@/components/Layout'
+import Layout from '@/components/layout/Layout'
 
-Witchly.components([Layout, LayoutTop, LayoutContent])
+Witchly.component(Layout)
 
 new Witchly({
   id: 'app',

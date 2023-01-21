@@ -1,37 +1,32 @@
-const Recipe = () => import('@/components/Recipe')
+const RecipeCard = () => import('@/components/recipe/RecipeCard')
 
 export default class Recipes {
   name = 'recipes-view'
-  links = [
-    { path: '/recipes', text: 'all recipes', divider: true },
-    { path: '/recipes/new', text: 'add new', divider: true },
-    { path: '/recipes/drafts', text: 'drafts', divider: false }
-  ]
+  state = () => ({
+    currentItems: 'recipes'
+  })
 
   render() {
     return (
       <layout-component>
-        <layout-top>
-          <span slot="title">Recipes</span>
-        </layout-top>
+        <div slot="header-main">
+          Recipes
+        </div>
+        <menu slot="header-aside">
+          <li onclick={() => this.currentItems = 'recipes'}>
+            Recipes
+          </li>
+          <li onclick={() => this.currentItems = 'drafts'}>
+            Drafts
+          </li>
+          <li onclick={() => this.$router.push('/new')}>
+            Add New
+          </li>
+        </menu>
 
-        <layout-content bg-color="#fff">
-          <div slot="main" class="all-recipes">
-            {this.sortedRecipes.length > 0 ? this.recipesList : null}
-          </div>
-
-          <div style="display: grid; min-width: 300px" slot="aside">
-            <ul class="accent-list">
-            {this.links.map(link => {
-              return (
-                <li onclick={() => this.$router.push(link.path)}>
-                  {link.text}
-                </li>
-              )
-            })}
-            </ul>
-          </div>
-        </layout-content>
+        <div class="all-recipes" slot="content-main">
+            {this.sortedItems.length > 0 ? this.recipesList : null}
+        </div>
       </layout-component>
     )
   }
@@ -40,9 +35,14 @@ export default class Recipes {
     return this.$store.state.recipes
   }
 
-  get sortedRecipes(){
-    if (this.recipes.length === 0) return []
-    return this.recipes.sort((a, b) => {
+  get drafts() {
+    return this.$store.state.drafts
+  }
+
+  get sortedItems() {
+    const items = this[this.currentItems]
+    if (items.length === 0) return []
+    return items.sort((a, b) => {
       let nameA = a.name.toLowerCase();
       let nameB = b.name.toLowerCase();
 
@@ -53,13 +53,13 @@ export default class Recipes {
   }
 
   get recipesList() {
-    return this.sortedRecipes.map(recipe => {
+    return this.sortedItems.map(recipe => {
       return (
-        <Recipe
+        <RecipeCard
           $router={this.$router}
           recipe={recipe}
           findTag={(tag) => this.findTag(tag)}>
-        </Recipe>
+        </RecipeCard>
       )
     })
   }
@@ -73,7 +73,7 @@ export default class Recipes {
 
       .all-recipes {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, minmax(300px, 1fr));
         grid-auto-rows: auto;
         gap: 20px;
       }
@@ -84,7 +84,6 @@ export default class Recipes {
       margin: 0 auto;
       padding: 30px;
       align-content: flex-start;
-      justify-content: center;
       background-color: #f9f9f9;
       }
 
@@ -100,27 +99,6 @@ export default class Recipes {
       font-weight: 300;
       font-size: 34px;
       text-align: center;
-          }
-
-    .recipes-nav {
-
-    }
-
-          .recipes-nav a {
-          text-decoration: none;
-          color: #F08080;
-          padding-bottom: 2px;
-          border-bottom: 1px solid transparent;
-
-          }
-
-          .recipes-nav a:hover {
-            color: #000;
-          }
-
-          .recipes-nav a.router-link-exact-active {
-            color: #000;
-            border-bottom: 1px solid #F08080;
           }
 
       .recipes-container {
@@ -139,7 +117,7 @@ export default class Recipes {
 
        .recipe-name {
           font-weight: 300;
-          font-size: 24px;
+          font-size: 22px;
           display: inline;
 
           }

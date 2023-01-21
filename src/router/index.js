@@ -1,7 +1,7 @@
-const MenuPlanner = () => import('@/components/MenuPlanner')
+const MenuPlanner = () => import('@/views/MenuPlanner')
 const About = () => import('@/views/About')
 const Recipes = () => import('@/views/Recipes')
-const Recipe = () => import('@/views/Recipe')
+const RecipeView = () => import('@/views/RecipeView')
 const Menus = () => import('@/views/Menus')
 
 const routes = [
@@ -90,8 +90,14 @@ export default {
     {
       path: '/recipe/:id',
       name: 'RecipePage',
-      component: Recipe,
+      component: RecipeView,
       props: true
+    },
+    {
+      path: '/new',
+      name: 'NewRecipe',
+      component: RecipeView,
+      props: {}
     },
     {
       path: '/menus',

@@ -1,7 +1,6 @@
 
 export default class Sidenav {
   name = 'app-sidenav'
-
   links = [
     { text: 'planner', path: '/' },
     { text: 'about', path: '/about' },
